@@ -1,0 +1,43 @@
+name: Deploy Go Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: echo "PORT=${{ secrets.PORT }}" >> .env
+
+      - name: Login to JFrog Artifactory
+        run: echo "${{ secrets.JFROG_ACCESS_TOKEN }}" | docker login trial4j0m55.jfrog.io -u oauth2 --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t trial4j0m55.jfrog.io/docker-local/go-app:latest .
+
+      - name: Push Docker Image to JFrog
+        run: docker push trial4j0m55.jfrog.io/docker-local/go-app:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Login to JFrog Artifactory
+        run: echo "${{ secrets.JFROG_ACCESS_TOKEN }}" | docker login trial4j0m55.jfrog.io -u oauth2 --password-stdin
+
+      - name: Pull Docker Image
+        run: docker pull trial4j0m55.jfrog.io/docker-local/go-app:latest
+
+      - name: Stop Existing Container (if running)
+        run: docker rm -f go-app-container || true
+
+      - name: Run New Container
+        run: docker run -d -p 4040:4040 --name go-app-container trial4j0m55.jfrog.io/docker-local/go-app:latest
