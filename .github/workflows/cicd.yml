@@ -38,4 +38,4 @@ jobs:
         run: docker rm -f go-app-container || true
 
       - name: Run New Container
-        run: docker run -d -p 4040:4040 -e PORT=${{ secrets.PORT }} --name go-app-container trial4ghvrq.jfrog.io/docker-local/go-app:latest
+        run: docker run -d -p 4040:4040 -e PORT=${{ secrets.PORT }} --name go-app-container trial4ghvrq.jfrog.io/docker-trial/go-app:latest
