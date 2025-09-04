@@ -39,3 +39,9 @@ jobs:
 
       - name: Run New Container
         run: docker run -d -p 4040:4040 -e PORT=${{ secrets.PORT }} --name go-app-container trial4ghvrq.jfrog.io/docker-trial/go-app:latest
+
+      - name: Test app locally
+        run: |
+          echo "Requesting http://localhost:4040"
+          curl --fail http://localhost:4040
+        
