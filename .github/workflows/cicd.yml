@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # EC2 runner for build
+    runs-on: ubuntu-latest  # EC2 runner for build
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
@@ -16,26 +16,26 @@ jobs:
         run: echo "PORT=${{ secrets.PORT }}" >> .env
 
       - name: Login to JFrog Artifactory
-        run: echo "${{ secrets.JFROG_ACCESS_TOKEN }}" | docker login trial4j0m55.jfrog.io -u nobeldineshk --password-stdin
+        run: echo "${{ secrets.JFROG_ACCESS_TOKEN }}" | docker login trial4ghvrq.jfrog.io -u naveena_edara@persistent.com --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t trial4j0m55.jfrog.io/docker-local/go-app:latest .
+        run: docker build -t trial4ghvrq.jfrog.io/docker-local/go-app:latest .
 
       - name: Push Docker Image to JFrog
-        run: docker push trial4j0m55.jfrog.io/docker-local/go-app:latest
+        run: docker push trial4ghvrq.jfrog.io/docker-local/go-app:latest
 
   deploy:
     needs: build
-    runs-on: self-hosted  # EC2 runner for deployment
+    runs-on: ubuntu-latest  # EC2 runner for deployment
     steps:
       - name: Login to JFrog Artifactory
-        run: echo "${{ secrets.JFROG_ACCESS_TOKEN }}" | docker login trial4j0m55.jfrog.io -u nobeldineshk --password-stdin
+        run: echo "${{ secrets.JFROG_ACCESS_TOKEN }}" | docker login trial4ghvrq.jfrog.io -u naveena_edara@persistent.com --password-stdin
 
       - name: Pull Docker Image
-        run: docker pull trial4j0m55.jfrog.io/docker-local/go-app:latest
+        run: docker pull trial4ghvrq.jfrog.io/docker-local/go-app:latest
 
       - name: Stop Existing Container (if running)
         run: docker rm -f go-app-container || true
 
       - name: Run New Container
-        run: docker run -d -p 4040:4040 -e PORT=${{ secrets.PORT }} --name go-app-container trial4j0m55.jfrog.io/docker-local/go-app:latest
+        run: docker run -d -p 4040:4040 -e PORT=${{ secrets.PORT }} --name go-app-container trial4ghvrq.jfrog.io/docker-local/go-app:latest
